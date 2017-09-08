@@ -14,7 +14,7 @@ export class Api {
 
   configure() {
     this.http.configure(x => {
-      x.withBaseUrl('http://genmap.garrettcox.io');
+      x.withBaseUrl('http://api.noplaceleft.tools');
       x.withHeader('Authorization', 'bearer ' + sessionStorage.getItem('auth_token'));
     });
   }
