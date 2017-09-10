@@ -3,13 +3,13 @@ import { customElement, bindable, inject } from 'aurelia-framework';
 @customElement('icon')
 @inject(Element)
 export class Icon {
-    @bindable name: string = null;
+  @bindable name: string = null;
 
-    constructor(element: Element) {
-        this.element = element;
-    }
+  constructor(element: Element) {
+    this.element = element;
+  }
 
-    nameChanged(name) {
-        this.element.setAttribute('style', `background-image: url(assets/icons/${name}.svg)`);
-    }
+  nameChanged(name) {
+    this.element.setAttribute('style', `background-image: url(assets/icons/${name}.svg)`);
+  }
 }

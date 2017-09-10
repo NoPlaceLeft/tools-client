@@ -124,33 +124,6 @@ $navbar-height: 4rem;
   @extend .col;
 }
 
-.button {
-  background: $green;
-  color: white;
-  cursor: pointer;
-  padding: 0.8rem 1.5rem;
-  border-radius: 4px;
-  border: none;
-  font-size: 0.9rem;
-  box-shadow: inset 0 -3px 0 rgba(31,45,61,.15);
-  outline: none;
-  transition: box-shadow 100ms ease;
-
-  &:hover, &:focus {
-    box-shadow: none;
-  }
-
-  &:disabled {
-    background: #E5E9F2;
-    color: #555;
-    cursor: not-allowed;
-
-    &:hover {
-      box-shadow: inset 0 -3px 0 rgba(31,45,61,.15);
-    }
-  }
-}
-
 .tool-nav {
   @extend .row;
   @extend .aic;

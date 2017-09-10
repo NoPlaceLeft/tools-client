@@ -1,0 +1,12 @@
+<template>
+  <div class="auth__container">
+    <div class="auth__header">
+      <div class="auth__title"> Welcome. </div>
+      <div class="auth__subtitle"> Sign up for an account here: </div>
+    </div>
+    <input value.bind="form.email" class="input" type="text" placeholder="Email address">
+    <input value.bind="form.password" class="input" type="password" placeholder="Password">
+    <button click.trigger="auth.signup(form)" class="button">Sign Up</button>
+    <div class="auth__prompt"> Already have an account? <a href="#/login">Login</a> </div>
+  </div>
+</template>

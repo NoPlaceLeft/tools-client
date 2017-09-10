@@ -16,8 +16,19 @@ export class App {
         moduleId: 'views/tool/tool',
         route: 'tools/:id',
         name: 'tool'
+      },
+      {
+        moduleId: 'views/auth/login',
+        route: 'login',
+        name: 'auth'
+      },
+      {
+        moduleId: 'views/auth/signup',
+        route: 'signup',
+        name: 'auth'
       }
     ]);
+
     this.router = router;
   }
 }

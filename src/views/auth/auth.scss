@@ -1,0 +1,75 @@
+/*
+ * Blocks:
+ * .auth
+ */
+
+$container-width: 35rem;
+
+.auth {
+  @extend .row;
+  @extend .aic;
+  @extend .jcc;
+
+  &__container {
+    max-width: $container-width;
+    margin-bottom: 2rem;
+  }
+
+  &__header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    font-size: 2.5rem;
+    color: $steel;
+    font-weight: 600;
+  }
+
+  &__subtitle {
+    color: $silver;
+  }
+
+  .button {
+    width: 100%;
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    padding: 1rem;
+  }
+
+  &__prompt {
+    margin-top: 1rem;
+    color: $silver;
+    text-align: center;
+
+    a {
+      color: $blue;
+    }
+  }
+
+}
+
+
+.input {
+  box-sizing: border-box;
+  font-size: 1rem;
+  padding: 1rem;
+  border: 2px solid $dark-snow;
+  border-radius: 4px;
+  outline: none;
+  width: 100%;
+  margin: 0.5rem 0;
+
+  &::placeholder {
+    color: $silver;
+    font-weight: 100;
+  }
+
+  &:hover {
+    border: 2px solid $smoke;
+  }
+
+  &:focus {
+    border: 2px solid $light-blue;
+  }
+}
