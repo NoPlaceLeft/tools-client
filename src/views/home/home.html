@@ -3,9 +3,11 @@
     <div class="home-category" repeat.for="category of categories">
       <div class="home-category__header">
         <div class="home-category__name">${category.name}</div>
-        <a class="home-category__browse" href="#/categories/${$index}">See All ▸</a>
+        <a if.bind="category.tools.length > 3" class="home-category__browse" href="#/categories/${$index}">See All ▸</a>
       </div>
       <div class="home-category__tools">
+        <span if.bind="category.name !== 'Favorites' && !category.tools.length" class="home-category__placeholder">More tools coming soon</span>
+        <span if.bind="category.name === 'Favorites' && !category.tools.length" class="home-category__placeholder">Favoriting coming soon</span>
         <a class="home-tool" repeat.for="tool of category.tools" href="#/tools/${$index}">
           <div class="home-tool__image" css="background-image: url('${tool.image}')"></div>
           <div class="home-tool__meta">

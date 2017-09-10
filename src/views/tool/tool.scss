@@ -68,6 +68,8 @@ $navbar-height: 4rem;
 .tool-documents {
   @extend .f1;
   background: $snow;
+  max-height: calc(100vh - 8rem);
+  overflow: scroll;
 
   &__document {
     @extend .row;

@@ -21,7 +21,7 @@
 .home-category {
   @extend .f1;
   margin: 1rem;
-  min-width: 26rem;
+  min-width: 28rem;
 
   &__header {
     @extend .row;
@@ -49,6 +49,12 @@
 
   &:hover &__browse {
     opacity: 1;
+  }
+
+  &__placeholder {
+    margin: 2rem;
+    color: $silver;
+    font-weight: 100;
   }
 
   &__tools {
