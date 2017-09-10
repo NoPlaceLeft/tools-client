@@ -44,10 +44,11 @@ export class Documents {
 
   delete(doc, $event) {
     $event.stopPropagation();
-    if (doc === this._current) this.changeCurrent(this.docs[0]);
 
     this.docs.splice(this.docs.indexOf(doc), 1);
     this.serialize();
+
+    if (doc === this._current) this.changeCurrent(this.docs[0]);
   }
 
   create() {
