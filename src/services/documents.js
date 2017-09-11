@@ -1,5 +1,6 @@
 
 import { Ls } from 'services/ls';
+import { tools } from 'services/tools';
 let lastId = 1;
 
 class WatchedDoc {
@@ -24,20 +25,22 @@ export class Documents {
   docs = [];
   _current = {};
   current = new WatchedDoc();
+  tool = null;
 
   serialize() {
-    Ls.set('documents', JSON.stringify(this.docs));
+    Ls.set(`documents__${this.tool.docFormat}`, JSON.stringify(this.docs));
   }
 
   deserialize() {
-    this.docs = JSON.parse(Ls.get('documents')) || [];
+    this.docs = JSON.parse(Ls.get(`documents__${this.tool.docFormat}`)) || [];
   }
 
   get empty() {
     return !this.docs.length;
   }
 
-  constructor() {
+  setTool(id) {
+    this.tool = tools[id];
     this.deserialize();
     this.changeCurrent(this.docs[0]);
   }
@@ -53,10 +56,12 @@ export class Documents {
 
   create() {
     this.docs.unshift({
-      format: 'churchCircles',
-      title: 'New Document',
-      content: 'Dummy Content',
-      id: this.uniqueId()
+      format: this.tool.template.format,
+      title: this.tool.template.title,
+      content: this.tool.template.content,
+      id: this.uniqueId(),
+      createdAt: new Date(),
+      updatedAt: new Date()
     });
 
     this.changeCurrent(this.docs[0]);
@@ -71,6 +76,7 @@ export class Documents {
   saveCurrent() {
     this._current.title = this.current.title;
     this._current.content = this.current.content;
+    this._current.updatedAt = new Date();
     this.current.assign(this._current);
 
     this.serialize();
