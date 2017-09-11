@@ -1,4 +1,6 @@
 
+import { tools } from 'services/tools';
+
 export class Home {
   constructor() {
     this.categories = [
@@ -21,14 +23,8 @@ export class Home {
       {
         name: 'Church Formation',
         tools: [
-          {
-            name: 'Four Fields GenMap',
-            image: 'assets/fourFields-genmap.png'
-          },
-          {
-            name: 'Church Circles GenMap',
-            image: 'assets/churchCircles-genmap.png'
-          }
+          tools[0],
+          tools[1]
         ]
       },
       {
