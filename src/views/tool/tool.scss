@@ -45,6 +45,8 @@ $navbar-height: 4rem;
 
   &__action {
     @extend .f1;
+    @extend .row;
+    @extend .jcc;
     border: 0;
     background: none;
     outline: none;
@@ -53,6 +55,11 @@ $navbar-height: 4rem;
 
     &:first-of-type {
       border-right: 1px solid $smoke;
+    }
+
+    &--invisible {
+      position: absolute;
+      visibility: hidden;
     }
   }
 
