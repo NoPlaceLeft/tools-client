@@ -4,7 +4,8 @@
       <a href="/#/" class="tool-sidebar__logo"> ← Tools </a>
     </div>
     <div class="tool-sidebar__actions">
-      <button class="tool-sidebar__action"><icon name="paperclip"></icon></button>
+      <label for="upload" class="tool-sidebar__action"><icon name="paperclip"></icon></label>
+      <input files.bind="importFile" class="tool-sidebar__action--invisible" type="file" id="upload" accept=".csv">
       <button click.trigger="documents.create()" class="tool-sidebar__action"><icon name="add"></icon></button>
     </div>
     <div class="tool-sidebar__placeholder" if.bind="documents.empty">
