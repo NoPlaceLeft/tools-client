@@ -54,15 +54,15 @@ export class Documents {
     if (doc === this._current) this.changeCurrent(this.docs[0]);
   }
 
-  create() {
-    this.docs.unshift({
+  create(overrides = {}) {
+    this.docs.unshift(Object.assign({}, {
       format: this.tool.template.format,
       title: this.tool.template.title,
       content: this.tool.template.content,
       id: this.uniqueId(),
       createdAt: new Date(),
       updatedAt: new Date()
-    });
+    }, overrides));
 
     this.changeCurrent(this.docs[0]);
     this.serialize();
