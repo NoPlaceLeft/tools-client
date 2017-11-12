@@ -16,9 +16,11 @@ export class GenMapperGraph {
   project;
   appVersion = '0.2.15';
 
+  _onChange = () => { }
+
   constructor(project, currentTemplate) {
     template = currentTemplate;
-    genmapper = this;
+    genmapper = window.genmapper = this;
     this.template = currentTemplate;
     this.project = project;
 
@@ -59,8 +61,11 @@ export class GenMapperGraph {
       .attr('class', 'group-nodes')
 
     this.csvHeader = template.fields.map(field => field.header).join(',') + '\n'
-    this.initialCsv = this.csvHeader + template.fields.map(field => this.getInitialValue(field)).join(',')
-    this.data = this.parseCsvData(this.initialCsv)
+    this.initialCsv = (this.csvHeader + template.fields.map(field => this.getInitialValue(field)).join(','));
+    if (!this.project.content) {
+      this.project.content = this.initialCsv;
+    }
+    this.data = this.parseCsvData(this.project.content);
     this.nodes
 
     this.origPosition()
@@ -72,6 +77,22 @@ export class GenMapperGraph {
     this.setKeyboardShorcuts()
 
     document.getElementsByTagName('body')[0].onresize = this.setSvgHeight
+  }
+
+  changeProject(project, currentTemplate) {
+    this.template = template = currentTemplate;
+    this.project = project;
+
+    if (!this.project.content) {
+      this.project.content = this.initialCsv;
+    }
+
+    this.data = this.parseCsvData(this.project.content);
+    this.redraw(this.template);
+  }
+
+  onChange(fn) {
+    this._onChange = () => fn(this.getOutputCsv());
   }
 
   // Beginning of function definitions
@@ -121,16 +142,16 @@ export class GenMapperGraph {
       '  <li><button onclick="genmapper.switchLanguage(this)" id="lang-sq">Shqip</button></li>' +
       '</ul>' +
       '</div>' +
-      '<button id="project-name" class="hint--rounded hint--right" aria-label=""><img src="assets/icons/039-file-text2.svg"></button>' +
       '<button onclick="genmapper.origPosition();" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.originalZoom') + '"><img src="assets/icons/135-search.svg"></i></button>' +
       '<button onclick="genmapper.zoomIn();" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.zoomIn') + '"><img src="assets/icons/136-zoom-in.svg"></i></button>' +
       '<button onclick="genmapper.zoomOut();" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.zoomOut') + '"><img src="assets/icons/137-zoom-out.svg"></i></button>' +
-      '<button onclick="genmapper.onLoad(\'file-input\')" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.importXlsxCsv') + '"><img src="assets/icons/098-upload.svg"></button>' +
-      '<input type="file" id="file-input" onchange="genmapper.importFile()" style="display:none;">' +
-      '<button onclick="genmapper.outputCsv()" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.exportCsv') + '"><img src="assets/icons/097-download.svg"></button>' +
       '<button onclick="genmapper.printMap(\'vertical\');" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.btnPrintVertical') + '"><img src="assets/icons/print-vertical.svg"></button>' +
       '<button onclick="genmapper.printMap(\'horizontal\');" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.btnPrintHorizontal') + '"><img src="assets/icons/print-horizontal.svg"></button>'
 
+    // '<button id="project-name" class="hint--rounded hint--right" aria-label=""><img src="assets/icons/039-file-text2.svg"></button>' +
+    // '<button onclick="genmapper.onLoad(\'file-input\')" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.importXlsxCsv') + '"><img src="assets/icons/098-upload.svg"></button>' +
+    // '<input type="file" id="file-input" onchange="genmapper.importFile()" style="display:none;">' +
+    // '<button onclick="genmapper.outputCsv()" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.exportCsv') + '"><img src="assets/icons/097-download.svg"></button>' +
     document.getElementById('edit-group').innerHTML = '<div id="edit-group-content">' +
       '  <h1>' + i18next.t('editGroup.editGroup') + '</h1>' +
       '  <form>' +
@@ -466,6 +487,8 @@ export class GenMapperGraph {
         this.updateFieldWithInherit(field, element)
       }
     })
+
+    this._onChange()
   }
 
   updateFieldWithInherit(field, element) {
@@ -631,6 +654,20 @@ export class GenMapperGraph {
       })
       return parsedLine
     })
+  }
+
+  getOutputCsv() {
+    return this.csvHeader + d3.csvFormatRows(this.data.map(function (d, i) {
+      const output = []
+      template.fields.forEach((field) => {
+        if (field.type === 'checkbox') {
+          output.push(d[field.header] ? '1' : '0')
+        } else {
+          output.push(d[field.header])
+        }
+      })
+      return output
+    }))
   }
 
   outputCsv() {

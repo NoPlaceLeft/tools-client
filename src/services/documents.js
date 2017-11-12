@@ -27,6 +27,8 @@ export class Documents {
   current = new WatchedDoc();
   tool = null;
 
+  subcriptions = [];
+
   serialize() {
     Ls.set(`documents__${this.tool.docFormat}`, JSON.stringify(this.docs));
   }
@@ -86,6 +88,22 @@ export class Documents {
     if (document) {
       this._current = document;
       this.current.assign(document);
+      this._callSubscribers(document);
     }
+  }
+
+  subscribe(fn) {
+    const dispose = () => {
+      const index = this.subcriptions.indexOf(fn);
+      if (index > -1) {
+        this.subcriptions.splice(index, 1);
+      }
+    };
+    this.subcriptions.push(fn);
+    return { dispose }
+  }
+
+  _callSubscribers(arg) {
+    this.subcriptions.forEach(s => s(arg))
   }
 }
