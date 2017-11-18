@@ -646,7 +646,7 @@ export class GenMapperGraph {
       parsedLine['parentId'] = d.parentId !== '' ? parseInt(d.parentId) : ''
       template.fields.forEach((field) => {
         if (field.type === 'checkbox') {
-          const fieldValue = d[field.header].toUpperCase()
+          const fieldValue = d[field.header].toUpperCase();
           parsedLine[field.header] = !!['TRUE', '1'].includes(fieldValue)
         } else if (field.type) {
           parsedLine[field.header] = d[field.header]

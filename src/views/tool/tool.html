@@ -36,10 +36,7 @@
       </div>
     </div>
     <div class="tool-view">
-      <require from="components/gen-mapper/gen-mapper"></require>
-      <gen-mapper></gen-mapper>
-      <!-- <require from="components/texteditor/texteditor"></require>
-      <texteditor></texteditor> -->
+      <compose view-model.bind="component"></compose>
     </div>
   </div>
 </template>

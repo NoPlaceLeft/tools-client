@@ -7,6 +7,7 @@ export const tools = [
     canPersist: true,
     exportExtension: 'csv',
     docFormat: 'fourFields',
+    component: 'gen-mapper',
     template: {
       format: 'fourFields',
       title: 'Four Fields',
@@ -20,6 +21,7 @@ export const tools = [
     canPersist: true,
     exportExtension: 'csv',
     docFormat: 'churchCircles',
+    component: 'gen-mapper',
     template: {
       format: 'churchCircles',
       title: 'Church Circles',
