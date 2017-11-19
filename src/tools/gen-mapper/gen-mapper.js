@@ -33,6 +33,12 @@ export class GenMapper {
     });
   }
 
+  detached() {
+    if (this.subscription) {
+      this.subscription.dispose();
+    }
+  }
+
   updateTemplate() {
     if (this.documents.tool && this.documents.tool.template) {
       this.templates.selectFormat(this.documents.tool.template.format);
