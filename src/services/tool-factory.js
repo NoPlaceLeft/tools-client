@@ -1,6 +1,4 @@
 import { Container, Factory, inject } from 'aurelia-framework';
-import { GenMapper } from "../components/gen-mapper/gen-mapper";
-import { relativeTimeRounding } from "../../node_modules/moment/moment";
 
 @inject(Container)
 export class ToolFactory {
