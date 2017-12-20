@@ -96,7 +96,9 @@
           "node_modules/moment/moment.js",
           "node_modules/bluebird/js/browser/bluebird.core.js",
           "node_modules/aurelia-cli/lib/resources/scripts/configure-bluebird.js",
-          "node_modules/requirejs/require.js"
+          "node_modules/requirejs/require.js",
+          "scripts/translations.js",
+          "scripts/templates.js"
         ],
         "dependencies": [
           "aurelia-binding",
@@ -122,6 +124,7 @@
           "aurelia-templating",
           "aurelia-templating-binding",
           "text",
+          "lodash",
           {
             "name": "aurelia-templating-resources",
             "path": "../node_modules/aurelia-templating-resources/dist/amd",
