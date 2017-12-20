@@ -2,6 +2,7 @@ import { inject, bindable } from 'aurelia-framework';
 import { Documents } from 'services/documents';
 import { tools } from 'services/tools';
 import { ToolFactory } from 'services/tool-factory';
+import { activationStrategy } from 'aurelia-router';
 
 @inject(Documents, ToolFactory)
 export class Tool {
@@ -43,6 +44,10 @@ export class Tool {
           title: name
         });
       });
+  }
+
+  determineActivationStrategy() {
+    return activationStrategy.replace;
   }
 }
 

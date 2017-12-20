@@ -3,6 +3,7 @@ import { GenMapperGraph } from './gen-mapper-graph';
 import { Templates } from 'services/templates';
 import { Documents } from 'services/documents';
 
+
 @useView('tools/gen-mapper/gen-mapper.html')
 @inject(Templates, Documents)
 export class GenMapper {
