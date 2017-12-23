@@ -176,3 +176,11 @@ $navbar-height: 4rem;
 
   position: relative;
 }
+
+
+@media print {
+  .tool-sidebar,
+  .tool-nav {
+    display: none;
+  }
+}
