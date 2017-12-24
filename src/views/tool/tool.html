@@ -29,7 +29,7 @@
     </div>
   </div>
   <div class="tool-main">
-    <div class="tool-nav" if.bind="canPersist">
+    <div class="tool-nav" if.bind="canPersist && component.enableNavbar">
       <input class="tool-nav__title" placeholder="Document Name" value.bind="documents.current.title">
       <div class="tool-nav__actions">
         <button class="tool-nav__save" disabled.bind="!documents.current.dirty" click.trigger="documents.saveCurrent()">Save</button>
