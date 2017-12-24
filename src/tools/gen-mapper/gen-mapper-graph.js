@@ -146,12 +146,12 @@ export class GenMapperGraph {
       '<button onclick="genmapper.zoomIn();" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.zoomIn') + '"><img src="assets/icons/136-zoom-in.svg"></i></button>' +
       '<button onclick="genmapper.zoomOut();" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.zoomOut') + '"><img src="assets/icons/137-zoom-out.svg"></i></button>' +
       '<button onclick="genmapper.printMap(\'vertical\');" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.btnPrintVertical') + '"><img src="assets/icons/print-vertical.svg"></button>' +
-      '<button onclick="genmapper.printMap(\'horizontal\');" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.btnPrintHorizontal') + '"><img src="assets/icons/print-horizontal.svg"></button>'
+      '<button onclick="genmapper.printMap(\'horizontal\');" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.btnPrintHorizontal') + '"><img src="assets/icons/print-horizontal.svg"></button>' +
+      '<button onclick="genmapper.outputCsv()" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.exportCsv') + '"><img src="assets/icons/097-download.svg"></button>' 
 
     // '<button id="project-name" class="hint--rounded hint--right" aria-label=""><img src="assets/icons/039-file-text2.svg"></button>' +
     // '<button onclick="genmapper.onLoad(\'file-input\')" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.importXlsxCsv') + '"><img src="assets/icons/098-upload.svg"></button>' +
     // '<input type="file" id="file-input" onchange="genmapper.importFile()" style="display:none;">' +
-    // '<button onclick="genmapper.outputCsv()" class="hint--rounded hint--right" aria-label="' + i18next.t('menu.exportCsv') + '"><img src="assets/icons/097-download.svg"></button>' +
     document.getElementById('edit-group').innerHTML = '<div id="edit-group-content">' +
       '  <h1>' + i18next.t('editGroup.editGroup') + '</h1>' +
       '  <form>' +
@@ -686,9 +686,9 @@ export class GenMapperGraph {
     const isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
       navigator.userAgent && !navigator.userAgent.match('CriOS')
     const promptMessage = isSafari ? i18next.t('messages.saveAsInSafari') : i18next.t('messages.saveAs')
-    const saveName = window.prompt(promptMessage, this.projectName + '.csv')
-    if (saveName === null) return
-    saveAs(blob, saveName)
+    // const saveName = window.prompt(promptMessage, this.projectName + '.csv')
+    // if (saveName === null) return
+    saveAs(blob, this.project.title)
   }
 
   parseTransform(a) {

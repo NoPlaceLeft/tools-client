@@ -26,6 +26,7 @@ export class GenMapper {
 
     this.genMapperGraph.onChange((content) => {
       this.documents.current.content = content;
+      this.documents.saveCurrent();
     });
 
     this.subscription = this.documents.subscribe(() => {
@@ -38,6 +39,10 @@ export class GenMapper {
     if (this.subscription) {
       this.subscription.dispose();
     }
+  }
+
+  updateComponentPosition() {
+    this.genMapperGraph.origPosition();  
   }
 
   updateTemplate() {

@@ -3,12 +3,16 @@ import { Documents } from 'services/documents';
 import { tools } from 'services/tools';
 import { ToolFactory } from 'services/tool-factory';
 import { activationStrategy } from 'aurelia-router';
+import { timeout } from 'services/utils';
 
 @inject(Documents, ToolFactory)
 export class Tool {
-
+  sidebarCollapsed = false;
   component = null;
   canPersist = true;
+  editModeDoc = null;
+  editModeDocInput = null;
+
   @bindable importFile;
 
   constructor(documents, toolFactory) {
@@ -44,6 +48,42 @@ export class Tool {
           title: name
         });
       });
+  }
+
+  enableEditMode(doc) {
+    this.editModeDoc = doc;
+    timeout(() => {
+      if (this.editModeDocInput) {
+        this.editModeDocInput.focus();
+      }
+    });
+  }
+
+  disableEditMode(doc) {
+    this.editModeDoc = null;
+    this.editModeDocInput = null;
+  }
+
+  onTitleChange(doc) {
+    if (this.documents.current === doc) {
+      this.documents.saveCurrent();
+    }
+    this.documents.serialize();
+    this.documents.deserialize();
+  }
+
+  deleteDocument($event, doc) {
+    const checkPrompt = window.prompt('Please type the name of the document you would like to DELETE!');
+    if (checkPrompt === doc.title) {
+      this.documents.delete(doc, $event);
+    }
+  }
+
+  onToggleSidebar() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+    timeout(() => {
+      this.component.updateComponentPosition();
+    });
   }
 
   determineActivationStrategy() {
