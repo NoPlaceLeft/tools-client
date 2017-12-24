@@ -41,6 +41,10 @@ export class GenMapper {
     }
   }
 
+  updateComponentPosition() {
+    this.genMapperGraph.origPosition();  
+  }
+
   updateTemplate() {
     if (this.documents.tool && this.documents.tool.template) {
       this.templates.selectFormat(this.documents.tool.template.format);

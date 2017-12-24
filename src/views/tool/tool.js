@@ -3,10 +3,11 @@ import { Documents } from 'services/documents';
 import { tools } from 'services/tools';
 import { ToolFactory } from 'services/tool-factory';
 import { activationStrategy } from 'aurelia-router';
+import { timeout } from 'services/utils';
 
 @inject(Documents, ToolFactory)
 export class Tool {
-
+  sidebarCollapsed = false;
   component = null;
   canPersist = true;
   editModeDoc = null;
@@ -51,12 +52,11 @@ export class Tool {
 
   enableEditMode(doc) {
     this.editModeDoc = doc;
-    const id = setTimeout(() => {
+    timeout(() => {
       if (this.editModeDocInput) {
         this.editModeDocInput.focus();
       }
-      clearTimeout(id);
-    }, 0);
+    });
   }
 
   disableEditMode(doc) {
@@ -77,6 +77,13 @@ export class Tool {
     if (checkPrompt === doc.title) {
       this.documents.delete(doc, $event);
     }
+  }
+
+  onToggleSidebar() {
+    this.sidebarCollapsed = !this.sidebarCollapsed;
+    timeout(() => {
+      this.component.updateComponentPosition();
+    });
   }
 
   determineActivationStrategy() {
