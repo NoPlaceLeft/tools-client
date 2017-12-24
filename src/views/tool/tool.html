@@ -35,7 +35,7 @@
         </div>
       </div>
     </div>
-    <div class="tool-sidebar__collapse" click.delegate="sidebarCollapsed = !sidebarCollapsed">
+    <div class="tool-sidebar__collapse" click.delegate="onToggleSidebar()">
       <icon if.bind="!sidebarCollapsed" name="arrow-left" class="tool-sidebar__icon--collapsed"></icon>
       <icon if.bind="sidebarCollapsed" name="arrow-right" class="tool-sidebar__icon--expanded"></icon>
     </div>
