@@ -9,6 +9,9 @@ export class Tool {
 
   component = null;
   canPersist = true;
+  editModeDoc = null;
+  editModeDocInput = null;
+
   @bindable importFile;
 
   constructor(documents, toolFactory) {
@@ -44,6 +47,29 @@ export class Tool {
           title: name
         });
       });
+  }
+
+  enableEditMode(doc) {
+    this.editModeDoc = doc;
+    const id = setTimeout(() => {
+      if (this.editModeDocInput) {
+        this.editModeDocInput.focus();
+      }
+      clearTimeout(id);
+    }, 0);
+  }
+
+  disableEditMode(doc) {
+    this.editModeDoc = null;
+    this.editModeDocInput = null;
+  }
+
+  onTitleChange(doc) {
+    if (this.documents.current === doc) {
+      this.documents.saveCurrent();
+    }
+    this.documents.serialize();
+    this.documents.deserialize();
   }
 
   determineActivationStrategy() {
