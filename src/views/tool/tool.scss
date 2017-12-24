@@ -17,8 +17,10 @@ $navbar-height: 4rem;
 
 .tool-sidebar {
   @extend .col;
+  position: relative;
   width: $sidebar-width;
   border-right: 1px solid $smoke;
+  z-index: 1;
 
   &__nav {
     @extend .row;
@@ -69,6 +71,34 @@ $navbar-height: 4rem;
     padding: 2rem 1rem;
     color: #8492A6;
     font-weight: 100;
+  }
+
+  &__collapse {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    height: 48px;
+    width: 24px;
+    transform: translateX(100%);
+    background: $silver;
+    border-top: 1px solid $smoke;
+    border-right: 1px solid $smoke;
+    display: flex;
+    cursor: pointer;
+
+    &:hover {
+      background: $dark-orange;
+    }
+  }
+
+  &__icon--collapsed,
+  &__icon--expanded {
+    margin: auto 0;
+  }
+
+  &.collapsed {
+    flex: 0;
+    transform: translateX(-100%);
   }
 }
 
