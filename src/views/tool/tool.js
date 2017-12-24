@@ -72,6 +72,13 @@ export class Tool {
     this.documents.deserialize();
   }
 
+  deleteDocument($event, doc) {
+    const checkPrompt = window.prompt('Please type the name of the document you would like to DELETE!');
+    if (checkPrompt === doc.title) {
+      this.documents.delete(doc, $event);
+    }
+  }
+
   determineActivationStrategy() {
     return activationStrategy.replace;
   }
