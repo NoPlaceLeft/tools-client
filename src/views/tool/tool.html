@@ -19,17 +19,23 @@
       <div class="tool-documents__document ${documents._current.id === doc.id ? 'tool-documents__document--active' : ''}" repeat.for="doc of documents.docs"
         click.trigger="documents.changeCurrent(doc)">
         <div class="tool-documents__meta">
-          <div class="tool-documents__title">${doc.title}</div>
+          <div class="tool-documents__title" dblclick.delegate="enableEditMode(doc)">
+            <template if.bind="editModeDoc !== doc">${doc.title}</template>
+            <template if.bind="editModeDoc === doc">
+              <input ref="editModeDocInput" placeholder="Document Title" value.bind="doc.title" change.trigger="onTitleChange(doc)" blur.trigger="disableEditMode(doc)"/>
+            </template>
+          </div>
           <div class="tool-documents__description">${doc.updatedAt | dateFormat}</div>
         </div>
         <div class="tool-documents__actions">
+          <icon click.trigger="enableEditMode(doc)" class="tool-documents__icon" name="edit"></icon>
           <icon click.trigger="documents.delete(doc, $event)" class="tool-documents__icon" name="delete"></icon>
         </div>
       </div>
     </div>
   </div>
   <div class="tool-main">
-    <div class="tool-nav" if.bind="canPersist">
+    <div class="tool-nav" if.bind="canPersist && component.enableNavbar">
       <input class="tool-nav__title" placeholder="Document Name" value.bind="documents.current.title">
       <div class="tool-nav__actions">
         <button class="tool-nav__save" disabled.bind="!documents.current.dirty" click.trigger="documents.saveCurrent()">Save</button>

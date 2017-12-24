@@ -93,6 +93,7 @@ $navbar-height: 4rem;
   }
 
   &__title {
+    font-weight: bold;
     font-size: 1.1rem;
     color: $steel;
   }
@@ -108,7 +109,7 @@ $navbar-height: 4rem;
   }
 
   &__icon {
-    margin: 6px;
+    margin: 0;
     padding: 6px;
     background-repeat: no-repeat;
     background-position: center;
