@@ -25,7 +25,10 @@ export class Tool {
   activate({ id }) {
     this.canPersist = tools[id].canPersist;
     this.documents.setTool(id);
-
+    this.documents.getDocuments().then(docs => {
+      this.docs = docs;
+      console.log(docs)
+    })
 
     const componentFactory = this.toolFactory.getComponent(this.documents.tool.component);
     if (componentFactory) {

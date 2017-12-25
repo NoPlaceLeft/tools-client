@@ -39,30 +39,48 @@ export class Documents {
   }
 
   serialize() {
-    Ls.set(`documents__${this.tool.docFormat}`, JSON.stringify(this.docs));
+    if (!this.auth.isAuth) {
+      Ls.set(`documents__${this.tool.docFormat}`, JSON.stringify(this.docs));
+    }
   }
 
   deserialize() {
-    this.docs = JSON.parse(Ls.get(`documents__${this.tool.docFormat}`)) || [];
+    if (this.auth.isAuth) {
+      return this.documentsApi.getAll('/documents').then(docs => {
+        this.docs = docs.filter(doc => doc.format === this.tool.template.format);
+        console.log(this.docs);
+        return this.docs;
+      })
+    } else {
+      this.docs = JSON.parse(Ls.get(`documents__${this.tool.docFormat}`)) || [];
+      return Promise.resolve(this.docs);
+    }
   }
 
   get empty() {
     return !this.docs.length;
   }
 
-  setTool(id) {
-    this.tool = tools[id];
-    this.deserialize();
-    this.changeCurrent(this.docs[0]);
+  getDocuments() {
+    return this.deserialize();
   }
 
-  delete(doc, $event) {
-    $event.stopPropagation();
+  setTool(id) {
+    this.tool = tools[id];
+    this.deserialize().then(()=> {
+      this.changeCurrent(this.docs[0]);
+    });
+  }
 
-    this.docs.splice(this.docs.indexOf(doc), 1);
-    this.serialize();
-
-    if (doc === this._current) this.changeCurrent(this.docs[0]);
+  delete(doc) {
+    if (this.auth.isAuth && doc.id) {
+      return this.documentsApi.delete(doc.id);
+    } else {
+      this.docs.splice(this.docs.indexOf(doc), 1);
+      this.serialize();
+      if (doc === this._current) this.changeCurrent(this.docs[0]);
+      return Promise.resolve();
+    }
   }
 
   create(overrides = {}) {
@@ -70,20 +88,19 @@ export class Documents {
       format: this.tool.template.format,
       title: this.tool.template.title + ' ' + this.docs.length,
       content: this.tool.template.content,
-      id: this.uniqueId(),
       createdAt: new Date(),
       updatedAt: new Date()
     }, overrides);
 
-    this.docs.unshift(newDoc);
-    
-    this.changeCurrent(this.docs[0]);
-    this.serialize();
-
     if (this.auth.isAuth) {
-      this.documentsApi.create(newDoc).then((req) => {
-        console.log(req);
-      })
+      this.documentsApi.create(newDoc)
+        .then((req) => this.getDocuments())
+        .then(() => this.changeCurrent(this.docs[0]));
+    } else {
+      newDoc.id = this.uniqueId();
+      this.docs.unshift(newDoc);
+      this.changeCurrent(this.docs[0]);
+      this.serialize();
     }
   }
 
@@ -98,14 +115,25 @@ export class Documents {
     this._current.updatedAt = new Date();
     this.current.assign(this._current);
 
-    this.serialize();
+    if (this.auth.isAuth) {
+      this.documentsApi.update(this._current.id, this.current).then((updated) => {
+        // console.log({updated})
+      })
+    } else {
+      this.serialize();
+    }
   }
 
-  changeCurrent(document) {
-    if (document) {
-      this._current = document;
-      this.current.assign(document);
-      this._callSubscribers(document);
+  changeCurrent(doc) {
+    if (doc) {
+      this._current = doc;
+      this.current.assign(doc);
+      this._callSubscribers(doc);
+    } else {
+      this.current.title = '';
+      this.current.content = '';
+      this._current.title = '';
+      this._current.content = '';
     }
   }
 
