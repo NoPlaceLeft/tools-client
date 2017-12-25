@@ -4,8 +4,9 @@ import { tools } from 'services/tools';
 import { ToolFactory } from 'services/tool-factory';
 import { activationStrategy } from 'aurelia-router';
 import { timeout } from 'services/utils';
+import { DocumentsApi } from 'services/api/documents';
 
-@inject(Documents, ToolFactory)
+@inject(Documents, ToolFactory, DocumentsApi)
 export class Tool {
   sidebarCollapsed = false;
   component = null;
@@ -15,14 +16,16 @@ export class Tool {
 
   @bindable importFile;
 
-  constructor(documents, toolFactory) {
+  constructor(documents, toolFactory, documentsApi) {
     this.documents = documents;
     this.toolFactory = toolFactory;
+    this.documentsApi = documentsApi;
   }
 
   activate({ id }) {
     this.canPersist = tools[id].canPersist;
     this.documents.setTool(id);
+
 
     const componentFactory = this.toolFactory.getComponent(this.documents.tool.component);
     if (componentFactory) {

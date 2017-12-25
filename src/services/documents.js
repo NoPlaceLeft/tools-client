@@ -1,6 +1,9 @@
-
+import { inject } from 'aurelia-framework';
 import { Ls } from 'services/ls';
 import { tools } from 'services/tools';
+import { Auth } from 'services/auth';
+import { DocumentsApi } from './api/documents';
+
 let lastId = 1;
 
 class WatchedDoc {
@@ -21,6 +24,7 @@ class WatchedDoc {
   }
 }
 
+@inject(Auth, DocumentsApi)
 export class Documents {
   docs = [];
   _current = {};
@@ -28,6 +32,11 @@ export class Documents {
   tool = null;
 
   subcriptions = [];
+
+  constructor(auth, documentsApi) {
+    this.auth = auth;
+    this.documentsApi = documentsApi;
+  }
 
   serialize() {
     Ls.set(`documents__${this.tool.docFormat}`, JSON.stringify(this.docs));
@@ -57,17 +66,25 @@ export class Documents {
   }
 
   create(overrides = {}) {
-    this.docs.unshift(Object.assign({}, {
+    const newDoc = Object.assign({}, {
       format: this.tool.template.format,
-      title: this.tool.template.title,
+      title: this.tool.template.title + ' ' + this.docs.length,
       content: this.tool.template.content,
       id: this.uniqueId(),
       createdAt: new Date(),
       updatedAt: new Date()
-    }, overrides));
+    }, overrides);
 
+    this.docs.unshift(newDoc);
+    
     this.changeCurrent(this.docs[0]);
     this.serialize();
+
+    if (this.auth.isAuth) {
+      this.documentsApi.create(newDoc).then((req) => {
+        console.log(req);
+      })
+    }
   }
 
   uniqueId() {
