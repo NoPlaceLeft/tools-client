@@ -1,6 +1,10 @@
 <template>
   <require from="./app.css"></require>
 
-  <header></header>
+  <header>
+    <div class="header-right">
+      <auth-header></auth-header>
+    </div>
+  </header>
   <router-view class="${router.currentInstruction.config.name}"></router-view>
 </template>

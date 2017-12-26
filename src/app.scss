@@ -2,6 +2,7 @@
 @import 'components/fonts.scss';
 @import 'components/flex.scss';
 @import 'components/components.scss';
+@import 'components/auth-header/auth-header.scss';
 @import 'components/icon/icon.scss';
 @import 'tools/gen-mapper/gen-mapper.scss';
 @import 'views/home/home.scss';
@@ -27,4 +28,20 @@ body {
 
 router-view {
   flex: 1 0 auto;
+}
+
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  pointer-events: none;
+  display: flex;
+  z-index: 3;
+
+  .header-right {
+    margin-left: auto;
+  }
 }

@@ -1,0 +1,24 @@
+<template tabindex="0">
+    <template if.bind="!isLoginRoute">
+        <template if.bind="!auth.isAuth">
+            <div click.delegate="onClick($event)">
+                Login <icon name="person"></icon>
+            </div>
+        </template>
+        <template if.bind="auth.isAuth">
+            <div click.delegate="onClick($event)">
+                <icon name="person"></icon>
+            </div>
+        </template>
+    </template>
+    <div class="auth-dropdown" if.bind="showLoginMenu">
+        <ul>
+            <li>
+                ${user.userName}
+            </li>
+            <li click.delegate="onLogout($event)">
+                Logout
+            </li>
+        </ul>
+    </div>
+</template>

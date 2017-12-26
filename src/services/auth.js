@@ -13,6 +13,13 @@ export class Auth {
     return !!sessionStorage.getItem('auth_token');
   }
 
+  user() {
+    return this.api.user().then(user => {
+      user.userName = user.email.replace(/\@.+/gi, '');
+      return user;
+    });
+  }
+
   login(form) {
     return this.api.login(form)
       .then(token => {
@@ -25,5 +32,10 @@ export class Auth {
   signup(form) {
     return this.api.signup(form)
       .then(() => this.login(form));
+  }
+
+  logout() {
+    sessionStorage.removeItem('auth_token');
+    this.router.navigate('');
   }
 }

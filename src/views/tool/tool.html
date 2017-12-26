@@ -17,13 +17,13 @@
         <span> You don't have any documents! Try importing or creating one using the buttons above </span>
       </div>
       <div class="tool-documents">
-        <div class="tool-documents__document ${documents._current.id === doc.id ? 'tool-documents__document--active' : ''}" repeat.for="doc of documents.docs"
-          click.trigger="documents.changeCurrent(doc)">
+        <div class="tool-documents__document ${documents.current === doc ? 'tool-documents__document--active' : ''}" repeat.for="doc of documents.docs"
+          click.trigger="selectDocument(doc)">
           <div class="tool-documents__meta">
-            <div class="tool-documents__title" dblclick.delegate="enableEditMode(doc)">
+            <div class="tool-documents__title">
               <template if.bind="editModeDoc !== doc">${doc.title}</template>
               <template if.bind="editModeDoc === doc">
-                <input ref="editModeDocInput" placeholder="Document Title" value.bind="doc.title" change.trigger="onTitleChange(doc)" blur.trigger="disableEditMode(doc)"/>
+                <input ref="editModeDocInput" placeholder="Document Title" value.bind="doc.title" change.trigger="onDocumentTitleChange(doc)" blur.trigger="disableEditMode(doc)"/>
               </template>
             </div>
             <div class="tool-documents__description">${doc.updatedAt | dateFormat}</div>
@@ -48,6 +48,7 @@
       </div>
     </div>
     <div class="tool-view">
+      <!-- <router-view></router-view> -->
       <compose view-model.bind="component"></compose>
     </div>
   </div>

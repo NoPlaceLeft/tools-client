@@ -83,6 +83,10 @@ export class GenMapperGraph {
     this.template = template = currentTemplate;
     this.project = project;
 
+    if (!this.project) {
+      this.project = {};
+    }
+
     if (!this.project.content) {
       this.project.content = this.initialCsv;
     }

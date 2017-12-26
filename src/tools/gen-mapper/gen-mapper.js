@@ -10,28 +10,31 @@ export class GenMapper {
 
   subscription;
 
-  constructor(templates, documents) {
+  constructor(templates, documents, options = {}) {
     this.templates = templates;
     this.documents = documents;
+
+    this.options = {
+      onChange: options.onChange || function() {},
+    };
   }
 
-  attached() {
-    this.updateTemplate();
-
-    this.genMapperGraph = new GenMapperGraph(this.documents.current, this.templates.current);
-
-    if (!this.documents.current.content) {
-      this.documents.current.content = this.genMapperGraph.initialCsv;
+  changeContent(doc) {
+    this.currentDoc = doc;
+    
+    if (!this.currentDoc) {
+      this.currentDoc = {title : '', content: this.genMapperGraph.initialCsv}
     }
 
+    if (!this.genMapperGraph) {
+      this.genMapperGraph = new GenMapperGraph(doc, this.templates.current);
+    } else {
+      this.genMapperGraph.changeProject(doc, this.templates.current);
+    }
+    
     this.genMapperGraph.onChange((content) => {
-      this.documents.current.content = content;
-      this.documents.saveCurrent();
-    });
-
-    this.subscription = this.documents.subscribe(() => {
-      this.updateTemplate();
-      this.genMapperGraph.changeProject(this.documents.current, this.templates.current);
+      this.currentDoc.content = content;
+      this.options.onChange(this.currentDoc);
     });
   }
 
@@ -43,11 +46,5 @@ export class GenMapper {
 
   updateComponentPosition() {
     this.genMapperGraph.origPosition();  
-  }
-
-  updateTemplate() {
-    if (this.documents.tool && this.documents.tool.template) {
-      this.templates.selectFormat(this.documents.tool.template.format);
-    }
   }
 }
