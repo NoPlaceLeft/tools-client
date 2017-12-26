@@ -7,6 +7,10 @@ export class AuthApi {
     this.api = api;
   }
 
+  user() {
+    return this.api.get('/auth');
+  }
+
   login(form) {
     return this.api.post('/auth', form);
   }

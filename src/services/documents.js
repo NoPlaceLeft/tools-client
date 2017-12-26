@@ -1,40 +1,61 @@
-
+import { inject, observable } from 'aurelia-framework';
 import { Ls } from 'services/ls';
 import { tools } from 'services/tools';
+import { Auth } from 'services/auth';
+import { DocumentsApi } from './api/documents';
+import { Templates } from './templates';
+
 let lastId = 1;
 
-class WatchedDoc {
-  _title;
-  _content;
-  title;
-  content;
-
-  get dirty() {
-    return (this._title !== this.title || this._content !== this.content);
-  }
-
-  assign({ title, content }) {
-    this._title = title;
-    this.title = title;
-    this._content = content;
-    this.content = content;
-  }
-}
-
+@inject(Auth, DocumentsApi, Templates)
 export class Documents {
+  
+  current = null;
   docs = [];
-  _current = {};
-  current = new WatchedDoc();
   tool = null;
 
   subcriptions = [];
 
+  constructor(auth, documentsApi, templates) {
+    this.auth = auth;
+    this.documentsApi = documentsApi;
+    this.templates = templates;
+  }
+
+  selectDocument(doc) {
+    this.current = doc;
+    this._callSubscribers(doc);
+  }
+
+  updateDocument(doc) {
+    if (this.auth.isAuth) {
+      return this.documentsApi.update(doc.id, doc);
+    } else {
+      this.serialize();
+      return Promise.resolve();
+    }
+  }
+
+  getDocuments() {
+    return this.deserialize();
+  }
+
   serialize() {
-    Ls.set(`documents__${this.tool.docFormat}`, JSON.stringify(this.docs));
+    if (!this.auth.isAuth) {
+      Ls.set(`documents__${this.tool.docFormat}`, JSON.stringify(this.docs));
+    }
   }
 
   deserialize() {
-    this.docs = JSON.parse(Ls.get(`documents__${this.tool.docFormat}`)) || [];
+    if (this.auth.isAuth) {
+      return this.documentsApi.getAll('/documents').then(docs => {
+        this.docs = docs.filter(doc => doc.format === this.tool.template.format);
+        return this.docs;
+      })
+    } else {
+      this.docs = JSON.parse(Ls.get(`documents__${this.tool.docFormat}`)) || [];
+      return Promise.resolve(this.docs);
+    }
   }
 
   get empty() {
@@ -43,53 +64,47 @@ export class Documents {
 
   setTool(id) {
     this.tool = tools[id];
-    this.deserialize();
-    this.changeCurrent(this.docs[0]);
+    if (this.tool && this.tool.template) {
+      this.templates.selectFormat(this.tool.template.format);
+    }
   }
 
-  delete(doc, $event) {
-    $event.stopPropagation();
-
-    this.docs.splice(this.docs.indexOf(doc), 1);
-    this.serialize();
-
-    if (doc === this._current) this.changeCurrent(this.docs[0]);
+  delete(doc) {
+    if (this.auth.isAuth && doc.id) {
+      return this.documentsApi.delete(doc.id)
+        .then(() => this.getDocuments());
+    } else {
+      this.docs.splice(this.docs.indexOf(doc), 1);
+      this.serialize();
+      if (doc === this._current) this.selectDocument(this.docs[0]);
+      return Promise.resolve();
+    }
   }
 
   create(overrides = {}) {
-    this.docs.unshift(Object.assign({}, {
+    const newDoc = Object.assign({}, {
       format: this.tool.template.format,
-      title: this.tool.template.title,
+      title: this.tool.template.title + ' ' + this.docs.length,
       content: this.tool.template.content,
-      id: this.uniqueId(),
       createdAt: new Date(),
       updatedAt: new Date()
-    }, overrides));
+    }, overrides);
 
-    this.changeCurrent(this.docs[0]);
-    this.serialize();
+    if (this.auth.isAuth) {
+      return this.documentsApi.create(newDoc)
+        .then((req) => this.getDocuments());
+    } else {
+      newDoc.id = this.uniqueId();
+      this.docs.unshift(newDoc);
+      this.selectDocument(this.docs[0]);
+      this.serialize();
+      return Promise.resolve(newDoc);
+    }
   }
 
   uniqueId() {
     const newId = lastId++;
     return this.docs.filter(d => d.id === newId).length ? this.uniqueId() : newId;
-  }
-
-  saveCurrent() {
-    this._current.title = this.current.title;
-    this._current.content = this.current.content;
-    this._current.updatedAt = new Date();
-    this.current.assign(this._current);
-
-    this.serialize();
-  }
-
-  changeCurrent(document) {
-    if (document) {
-      this._current = document;
-      this.current.assign(document);
-      this._callSubscribers(document);
-    }
   }
 
   subscribe(fn) {

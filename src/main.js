@@ -10,6 +10,7 @@ export function configure(aurelia) {
   aurelia.use
     .standardConfiguration()
     .globalResources('components/icon/icon')
+    .globalResources('components/auth-header/auth-header')
     .feature('tools/gen-mapper', registerTool)
 
   if (environment.debug) {
