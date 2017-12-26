@@ -18,9 +18,9 @@
       </div>
       <div class="tool-documents">
         <div class="tool-documents__document ${documents._current.id === doc.id ? 'tool-documents__document--active' : ''}" repeat.for="doc of documents.docs"
-          click.trigger="documents.changeCurrent(doc)">
+          click.trigger="selectDocument(doc)">
           <div class="tool-documents__meta">
-            <div class="tool-documents__title" dblclick.delegate="enableEditMode(doc)">
+            <div class="tool-documents__title">
               <template if.bind="editModeDoc !== doc">${doc.title}</template>
               <template if.bind="editModeDoc === doc">
                 <input ref="editModeDocInput" placeholder="Document Title" value.bind="doc.title" change.trigger="onTitleChange(doc)" blur.trigger="disableEditMode(doc)"/>
@@ -48,7 +48,8 @@
       </div>
     </div>
     <div class="tool-view">
-      <compose view-model.bind="component"></compose>
+      <router-view></router-view>
+      <!-- <compose view-model.bind="component"></compose> -->
     </div>
   </div>
 </template>

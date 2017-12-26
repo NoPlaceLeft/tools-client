@@ -3,6 +3,7 @@ import { Ls } from 'services/ls';
 import { tools } from 'services/tools';
 import { Auth } from 'services/auth';
 import { DocumentsApi } from './api/documents';
+import { Templates } from './templates';
 
 let lastId = 1;
 
@@ -24,7 +25,7 @@ class WatchedDoc {
   }
 }
 
-@inject(Auth, DocumentsApi)
+@inject(Auth, DocumentsApi, Templates)
 export class Documents {
   docs = [];
   _current = {};
@@ -33,9 +34,10 @@ export class Documents {
 
   subcriptions = [];
 
-  constructor(auth, documentsApi) {
+  constructor(auth, documentsApi, templates) {
     this.auth = auth;
     this.documentsApi = documentsApi;
+    this.templates = templates;
   }
 
   serialize() {
@@ -70,6 +72,10 @@ export class Documents {
     this.deserialize().then(()=> {
       this.changeCurrent(this.docs[0]);
     });
+
+    if (this.tool && this.tool.template) {
+      this.templates.selectFormat(this.tool.template.format);
+    }
   }
 
   delete(doc) {

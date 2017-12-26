@@ -10,15 +10,17 @@ export class GenMapper {
 
   subscription;
 
-  constructor(templates, documents) {
+  constructor(templates, documents, currentDoc, currentTemplate) {
     this.templates = templates;
     this.documents = documents;
+    this.currentDoc = currentDoc;
+    this.currentTemplate = currentTemplate;
   }
 
   attached() {
     this.updateTemplate();
 
-    this.genMapperGraph = new GenMapperGraph(this.documents.current, this.templates.current);
+    this.genMapperGraph = new GenMapperGraph(this.currentDoc, this.currentTemplate);
 
     if (!this.documents.current.content) {
       this.documents.current.content = this.genMapperGraph.initialCsv;
@@ -29,10 +31,10 @@ export class GenMapper {
       this.documents.saveCurrent();
     });
 
-    this.subscription = this.documents.subscribe(() => {
-      this.updateTemplate();
-      this.genMapperGraph.changeProject(this.documents.current, this.templates.current);
-    });
+    // this.subscription = this.documents.subscribe(() => {
+    //   this.updateTemplate();
+    //   this.genMapperGraph.changeProject(this.documents.current, this.templates.current);
+    // });
   }
 
   detached() {

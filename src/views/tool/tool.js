@@ -22,18 +22,34 @@ export class Tool {
     this.documentsApi = documentsApi;
   }
 
+  configureRouter(config, router) {
+    config.map([
+      {
+        route: [''],
+        moduleId: 'tools/gen-mapper/tool',
+        name: 'gen-mapper'
+      },
+      {
+        route: [':documentId'],
+        moduleId: 'tools/gen-mapper/tool',
+        name: 'gen-mapper-child'
+      }
+    ]);
+    this.router = router;
+  }
+
   activate({ id }) {
     this.canPersist = tools[id].canPersist;
     this.documents.setTool(id);
     this.documents.getDocuments().then(docs => {
       this.docs = docs;
-      console.log(docs)
-    })
+    });
+    
+    // const componentFactory = this.toolFactory.getComponent(this.documents.tool.component);
 
-    const componentFactory = this.toolFactory.getComponent(this.documents.tool.component);
-    if (componentFactory) {
-      this.component = componentFactory();
-    }
+    // if (componentFactory) {
+    //   this.component = componentFactory();
+    // }
   }
 
   importFileChanged(files) {
@@ -90,6 +106,10 @@ export class Tool {
     timeout(() => {
       this.component.updateComponentPosition();
     });
+  }
+
+  selectDocument(doc) {
+    this.router.navigate(doc.id);
   }
 
   determineActivationStrategy() {
