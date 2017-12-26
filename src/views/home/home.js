@@ -21,7 +21,7 @@ export class Home {
       //   tools: []
       // },
       {
-        name: 'Church Formation',
+        name: 'Gen Mapping',
         tools: [
           tools[0],
           tools[1]
