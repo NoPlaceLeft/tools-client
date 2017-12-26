@@ -1,4 +1,4 @@
-import { inject } from 'aurelia-framework';
+import { inject, observable } from 'aurelia-framework';
 import { Ls } from 'services/ls';
 import { tools } from 'services/tools';
 import { Auth } from 'services/auth';
@@ -7,29 +7,11 @@ import { Templates } from './templates';
 
 let lastId = 1;
 
-class WatchedDoc {
-  _title;
-  _content;
-  title;
-  content;
-
-  get dirty() {
-    return (this._title !== this.title || this._content !== this.content);
-  }
-
-  assign({ title, content }) {
-    this._title = title;
-    this.title = title;
-    this._content = content;
-    this.content = content;
-  }
-}
-
 @inject(Auth, DocumentsApi, Templates)
 export class Documents {
+  
+  current = null;
   docs = [];
-  _current = {};
-  current = new WatchedDoc();
   tool = null;
 
   subcriptions = [];
@@ -38,6 +20,24 @@ export class Documents {
     this.auth = auth;
     this.documentsApi = documentsApi;
     this.templates = templates;
+  }
+
+  selectDocument(doc) {
+    this.current = doc;
+    this._callSubscribers(doc);
+  }
+
+  updateDocument(doc) {
+    if (this.auth.isAuth) {
+      return this.documentsApi.update(doc.id, doc);
+    } else {
+      this.serialize();
+      return Promise.resolve();
+    }
+  }
+
+  getDocuments() {
+    return this.deserialize();
   }
 
   serialize() {
@@ -50,7 +50,6 @@ export class Documents {
     if (this.auth.isAuth) {
       return this.documentsApi.getAll('/documents').then(docs => {
         this.docs = docs.filter(doc => doc.format === this.tool.template.format);
-        console.log(this.docs);
         return this.docs;
       })
     } else {
@@ -63,16 +62,8 @@ export class Documents {
     return !this.docs.length;
   }
 
-  getDocuments() {
-    return this.deserialize();
-  }
-
   setTool(id) {
     this.tool = tools[id];
-    this.deserialize().then(()=> {
-      this.changeCurrent(this.docs[0]);
-    });
-
     if (this.tool && this.tool.template) {
       this.templates.selectFormat(this.tool.template.format);
     }
@@ -80,11 +71,12 @@ export class Documents {
 
   delete(doc) {
     if (this.auth.isAuth && doc.id) {
-      return this.documentsApi.delete(doc.id);
+      return this.documentsApi.delete(doc.id)
+        .then(() => this.getDocuments());
     } else {
       this.docs.splice(this.docs.indexOf(doc), 1);
       this.serialize();
-      if (doc === this._current) this.changeCurrent(this.docs[0]);
+      if (doc === this._current) this.selectDocument(this.docs[0]);
       return Promise.resolve();
     }
   }
@@ -99,48 +91,20 @@ export class Documents {
     }, overrides);
 
     if (this.auth.isAuth) {
-      this.documentsApi.create(newDoc)
-        .then((req) => this.getDocuments())
-        .then(() => this.changeCurrent(this.docs[0]));
+      return this.documentsApi.create(newDoc)
+        .then((req) => this.getDocuments());
     } else {
       newDoc.id = this.uniqueId();
       this.docs.unshift(newDoc);
-      this.changeCurrent(this.docs[0]);
+      this.selectDocument(this.docs[0]);
       this.serialize();
+      return Promise.resolve(newDoc);
     }
   }
 
   uniqueId() {
     const newId = lastId++;
     return this.docs.filter(d => d.id === newId).length ? this.uniqueId() : newId;
-  }
-
-  saveCurrent() {
-    this._current.title = this.current.title;
-    this._current.content = this.current.content;
-    this._current.updatedAt = new Date();
-    this.current.assign(this._current);
-
-    if (this.auth.isAuth) {
-      this.documentsApi.update(this._current.id, this.current).then((updated) => {
-        // console.log({updated})
-      })
-    } else {
-      this.serialize();
-    }
-  }
-
-  changeCurrent(doc) {
-    if (doc) {
-      this._current = doc;
-      this.current.assign(doc);
-      this._callSubscribers(doc);
-    } else {
-      this.current.title = '';
-      this.current.content = '';
-      this._current.title = '';
-      this._current.content = '';
-    }
   }
 
   subscribe(fn) {
